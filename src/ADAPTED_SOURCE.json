@@ -1,0 +1,9 @@
+{
+  "adapted_from": "DialogueOutline/source/src/core.cpp",
+  "source_sha256": "206e50793ca1e3e1cfa1412583f2f05e7a3b5533707d6e3f20f9004f6527e68c",
+  "source_license": "MIT",
+  "preserved_copyright": "Copyright (c) 2026 DialogueOutline contributors",
+  "adapted_parts": "host filename/SHA256 guard, cumulative Interlocked status, explicit InitOnce pattern",
+  "copied_code_excludes": "render callback, bridge, allocation and hook logic",
+  "source_git_commit": "bdefc92caf351d941ce5413e664ac6faded078e1"
+}

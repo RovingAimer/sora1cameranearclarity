@@ -1,0 +1,2 @@
+# Preserve native source and recorded hash bytes on every host.
+* -text

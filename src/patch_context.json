@@ -1,0 +1,12 @@
+{
+  "reference_sha256": "9585d3d993874d65156aba633c00b8a25faab3afde8953a8a183c80fb8f657ac",
+  "reference_bytes": 11862528,
+  "context_rva": "0x1c9613",
+  "context_file_offset": "0x1c8a13",
+  "context_hex": "0f 2f fe 72 37 41 f6 85 02 01 00 00 10 75 25 f3 0f 10 83 3c 24 00 00 f3 0f 10 4c 24 30 f3 41 0f 5c c2 0f 2f ce f3 41 0f 5f c3 f3 0f 11 83 3c 24 00 00 72 35 89 bb 3c 24 00 00 eb 2d 41 f6 85 02 01 00 00 10 74 0c c7 83 3c 24 00 00 00 00 80 3f eb 17 f3 44 0f 58 93 3c 24 00 00 f3 44 0f 5d d0 f3 44 0f 11 93 3c 24 00 00 f3 44 0f 10 25 47 9f 81 00 44 0f b6 64 24 20 4c 8b ac 24 70 01 00 00 f3 0f 10 83 3c 24 00 00 f3 0f 59 83 40 24 00 00 f3 0f 59 83 bc 21 00 00",
+  "patch_rva": "0x1c9616",
+  "before": "72 37",
+  "after": "eb 37",
+  "target_rva": "0x1c964f",
+  "context_end_exclusive": "0x1c96ab"
+}

@@ -1,0 +1,9 @@
+/build/
+/__pycache__/
+/tools/__pycache__/
+/DOF_BUILDING.md
+/tools/build_near_dof.py
+/tools/dxbc_hash.py
+/third_party/
+
+/provenance/

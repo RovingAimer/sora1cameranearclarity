@@ -1,0 +1,14 @@
+{
+  "repository": "RovingAimer/sora1cameranearclarity",
+  "name": "相机反虚化",
+  "version": "0.1.0",
+  "runtime_name": "CameraNearClarity",
+  "body": "《空之轨迹 the 1st》相机反虚化：相机靠近人物时保持人物显示，保留远距离淡出和剧情/整体透明度。景深与裁切面沿用游戏原逻辑。\n\n附件用途：\n\n- `CameraNearClarity-v{version}.zip`：安装文件 `mods/CameraNearClarity/CameraNearClarity.dll` 和同目录 `sora_mod.ini`。\n- `CameraNearClarity-v{version}-source.zip`：完整源码、构建方法、来源记录与 MIT 许可，供查验或自行编译。\n\n必装依赖：[Mod加载器 v0.2.0](https://github.com/RovingAimer/sora1looseload/releases/tag/v0.2.0)。退出游戏，备份将覆盖的文件，先安装加载器，再将相机安装 ZIP 解压到 `sora_1st.exe` 所在目录，保留目录层级。恢复时退出游戏，恢复备份；安装前不存在的模块文件可移除。\n\nDLL 会在游戏进程内以当前玩家账户权限运行代码，可能影响游戏稳定性、文件和数据。只使用可信来源；完整源码可供查验和自行编译，附件 SHA256 可与发布清单核对。\n\n[支持版本、源码和完整文档](https://github.com/RovingAimer/sora1cameranearclarity/blob/main/README.md)",
+  "runtime_acceptance": {
+    "date": "2026-10-17",
+    "user_statement": "测试正常，字幕描边和相机反虚化都没问题，可以发布加载器0.2.0和相机反虚化0.1.0了",
+    "game_runtime_verified": true,
+    "exe_sha256": "9585d3d993874d65156aba633c00b8a25faab3afde8953a8a183c80fb8f657ac",
+    "scope": "用户确认字幕描边和相机反虚化正常；未扩展为其他场景或版本兼容承诺。"
+  }
+}
