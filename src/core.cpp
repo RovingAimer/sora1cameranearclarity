@@ -7,6 +7,7 @@
 #include "CameraNearClarity.h"
 #include "LicenseNotice.h"
 #include "PatchContext.h"
+#include "runtime_control.h"
 #include <bcrypt.h>
 #include <cstdint>
 #include <cstring>
@@ -23,6 +24,9 @@ constexpr unsigned char kExeHash[] = {
 };
 volatile LONG gStatus = 0;
 INIT_ONCE gOnce = INIT_ONCE_STATIC_INIT;
+unsigned char* gPatchContext = nullptr;
+bool gPatchEnabled = false;
+bool gPatchReady = false;
 void status(DWORD value) noexcept { InterlockedOr(&gStatus, static_cast<LONG>(value)); }
 
 bool host_path(wchar_t (&path)[32768]) noexcept {
@@ -56,7 +60,7 @@ bool verified_file_hash(const wchar_t* path) noexcept {
     return okay && std::memcmp(digest, kExeHash, sizeof(digest)) == 0;
 }
 
-bool install_patch() noexcept {
+bool prepare_patch() noexcept {
     auto* base = reinterpret_cast<unsigned char*>(GetModuleHandleW(nullptr));
     if (!base) return false;
     auto* context = base + kContextRva;
@@ -73,20 +77,51 @@ bool install_patch() noexcept {
         status(PatchConflict); return false;
     }
     status(OriginalContextMatch);
+    gPatchContext = context;
+    gPatchReady = true;
+    return true;
+}
+BOOL CALLBACK initialize(PINIT_ONCE, PVOID, PVOID*) noexcept;
+} // namespace
+
+namespace camera {
+bool SetEnabled(bool enabled) noexcept {
+    if (!gPatchReady) return false;
+    unsigned char expected[sizeof(kContext)];
+    std::memcpy(expected, kContext, sizeof(expected));
+    if (gPatchEnabled) expected[kPatchRva-kContextRva] = 0xEB;
+    if (std::memcmp(gPatchContext, expected, sizeof(expected)) != 0) {
+        status(PatchConflict);
+        InterlockedAnd(&gStatus, ~static_cast<LONG>(PatchActive));
+        gPatchReady = false; // Unknown writer: never overwrite or retry its bytes.
+        return false;
+    }
+    if (enabled == gPatchEnabled) return true;
+    auto* patch = gPatchContext + (kPatchRva-kContextRva);
     DWORD previous = 0;
-    if (!VirtualProtect(patch, sizeof(SHORT), PAGE_EXECUTE_READWRITE, &previous)) return false;
-    // Aligned 2-byte atomic compare/exchange preserves displacement and avoids a torn instruction.
-    // A competing writer changing the original 72 37 causes refusal, never an overwrite.
-    const bool installed = InterlockedCompareExchange16(reinterpret_cast<volatile SHORT*>(patch),
-        static_cast<SHORT>(0x37EB), static_cast<SHORT>(0x3772)) == static_cast<SHORT>(0x3772);
+    if (!VirtualProtect(patch, sizeof(SHORT), PAGE_EXECUTE_READWRITE, &previous)) {
+        status(PatchFailed); return false;
+    }
+    const auto before = static_cast<SHORT>(gPatchEnabled ? 0x37EB : 0x3772);
+    const auto after = static_cast<SHORT>(enabled ? 0x37EB : 0x3772);
+    const bool changed = InterlockedCompareExchange16(reinterpret_cast<volatile SHORT*>(patch), after, before) == before;
     DWORD ignored = 0;
     const bool restored = VirtualProtect(patch, sizeof(SHORT), previous, &ignored) != FALSE;
     const bool flushed = FlushInstructionCache(GetCurrentProcess(), patch, sizeof(SHORT)) != FALSE;
-    if (!restored || !flushed) status(MemoryFinalizeFailed);
-    if (!installed) { status(PatchConflict); return false; }
-    status(PatchActive);
-    return true;
+    if (!restored || !flushed) { status(MemoryFinalizeFailed); gPatchReady = false; }
+    if (!changed) {
+        status(PatchConflict);
+        InterlockedAnd(&gStatus, ~static_cast<LONG>(PatchActive));
+        gPatchReady = false;
+        return false;
+    }
+    gPatchEnabled = enabled;
+    if (enabled) status(PatchActive);
+    else InterlockedAnd(&gStatus, ~static_cast<LONG>(PatchActive));
+    return restored && flushed;
 }
+}
+namespace {
 BOOL CALLBACK initialize(PINIT_ONCE, PVOID, PVOID*) noexcept {
     wchar_t path[32768] = {};
     if (!host_path(path)) { status(ForeignHost | InitializationFinished); return TRUE; }
@@ -95,7 +130,15 @@ BOOL CALLBACK initialize(PINIT_ONCE, PVOID, PVOID*) noexcept {
         status(HostHashRejected | PatchFailed | InitializationFinished); return TRUE;
     }
     status(HostHashMatch);
-    if (!install_patch()) status(PatchFailed);
+    if (!prepare_patch()) {
+        status(PatchFailed | InitializationFinished); return TRUE;
+    }
+    HMODULE pinned = nullptr;
+    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
+            reinterpret_cast<LPCWSTR>(&initialize), &pinned)) {
+        status(CorePinFailed | InitializationFinished); return TRUE;
+    }
+    if (!camera::StartControls(pinned)) status(ControlUnavailable);
     status(InitializationFinished);
     return TRUE; // Cache both success and refusal; explicit initialization cannot race retries.
 }

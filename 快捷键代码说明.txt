@@ -1,0 +1,58 @@
+相机反虚化：开关与快捷键
+
+配置文件：游戏目录/mods/CameraNearClarity/CameraNearClarity.ini
+修改 CameraNearClarity.ini，不是加载器声明 sora_mod.ini。
+
+[CameraNearClarity]
+Enabled=1
+ToggleKey=0x77
+
+Enabled=1：开启反虚化，近距离人物保持显示。
+Enabled=0：关闭反虚化，恢复游戏原有的近距离淡出逻辑。
+ToggleKey=0x77：默认 F8；也可以写十进制 119。
+ToggleKey=0：禁用快捷键，仍可通过 Enabled 配置控制。
+
+使用方式：
+- 仅游戏进程窗口在前台时响应，按下一次切换一次；按住不连续切换。
+- 切出游戏时按键不切换；切回时若已按住，需要松开后重新按下。
+- 快捷键只改变本次运行状态，不写回 INI。重启后重新采用 Enabled。
+- 配置内容每约 500 ms 检查一次；保存有效的新内容时同时应用 Enabled 和 ToggleKey，不需要重启。
+- 修改快捷键时，Enabled 也会按文件中的值重新应用。例如当前临时关闭，文件仍 Enabled=1，修改 ToggleKey 保存后会重新开启。
+- 保存内容完全相同时不重置快捷键临时状态。文件缺失、正在保存或内容非法时保留上次状态；首次没有可用配置时默认开启、F8切换。
+- 配置需完整保留两个键。UTF-8（可带 BOM）或 UTF-16 LE（带 BOM），上限 8 KiB；分号和井号支持行内注释。
+- 此设置使用 Windows 虚拟键码，不是扫描码。当前支持单个按键，不是组合键语法，也不声明手柄快捷键兼容。
+- 不拦截按键；所选按键原有的游戏/其他 Mod 功能仍可能同时触发，发生冲突时换一个键。
+
+常用代码（十六进制；F1–F12 连续）：
+F1  0x70    F2  0x71    F3  0x72    F4  0x73
+F5  0x74    F6  0x75    F7  0x76    F8  0x77
+F9  0x78    F10 0x79    F11 0x7A    F12 0x7B
+
+字母 A–Z：0x41–0x5A，例如 A=0x41、C=0x43、K=0x4B、Z=0x5A。
+主键盘数字 0–9：0x30–0x39，例如 0=0x30、1=0x31。
+小键盘数字 0–9：0x60–0x69，与主键盘数字独立。
+
+PageUp    0x21      PageDown  0x22
+End       0x23      Home      0x24
+Insert    0x2D      Delete    0x2E
+Space     0x20      Tab       0x09
+Enter     0x0D      Esc       0x1B
+Left      0x25      Up        0x26
+Right     0x27      Down      0x28
+左 Shift  0xA0      右 Shift  0xA1
+左 Ctrl   0xA2      右 Ctrl   0xA3
+左 Alt    0xA4      右 Alt    0xA5
+
+允许的数字范围：0–254；保留或系统未分配的代码可能没有对应按键。F12 常用于截图，Alt/方向键等也可能与游戏或系统操作冲突。
+
+示例：改为 F9
+[CameraNearClarity]
+Enabled=1
+ToggleKey=0x78
+
+Windows 官方完整代码表：
+https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+
+安装：此版是本地测试候选，不是正式发布。退出游戏，备份原 CameraNearClarity.dll，将安装 ZIP 合并到 sora_1st.exe 所在目录。新包新增 CameraNearClarity.ini；若已有个人配置，先保留并对照补齐两个键。通用加载器继续使用 v0.2.0，不需要替换它。
+测试：同一近距离人物场景按 F8，确认开启/关闭分别为人物保持显示/恢复原生淡出；长按、切出切回、修改快捷键及 Enabled 保存均应正确。实际透明度变化跟随游戏人物更新，不保证无过渡动画。远距离淡出、剧情透明度、其他 Mod 应保持正常。
+回退：退出游戏后恢复原 DLL，移除本次新增的 CameraNearClarity.ini；保留 sora_mod.ini 和其他 Mod。

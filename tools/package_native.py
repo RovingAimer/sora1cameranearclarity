@@ -45,7 +45,7 @@ def main():
         snapshot = json.loads((ROOT/'SOURCE_MANIFEST.json').read_text(encoding='utf-8'))
         commit, names = snapshot['source_commit'], list(snapshot['files'])
     sources = {name:(ROOT/name).read_bytes() for name in names}
-    allowed_files = {'README.md','BUILDING.md','测试步骤.md','LICENSE','build.py','sora_mod.ini',
+    allowed_files = {'README.md','BUILDING.md','测试步骤.md','快捷键代码说明.txt','CameraNearClarity.ini','LICENSE','build.py','sora_mod.ini',
                      'release_plan.json','.gitignore','.gitattributes'}
     for name in sources:
         if name not in allowed_files and not (name.startswith('src/') or name == 'tools/package_native.py'):
@@ -68,15 +68,17 @@ def main():
     source_manifest = dict(source_commit=commit, files={n:digest(d) for n,d in sorted(sources.items())})
     sources['SOURCE_MANIFEST.json'] = (json.dumps(source_manifest,indent=2,ensure_ascii=False)+'\n').encode('utf-8')
     install = {'mods/CameraNearClarity/CameraNearClarity.dll':dll,
-               'mods/CameraNearClarity/sora_mod.ini':sources['sora_mod.ini']}
+               'mods/CameraNearClarity/sora_mod.ini':sources['sora_mod.ini'],
+               'mods/CameraNearClarity/CameraNearClarity.ini':sources['CameraNearClarity.ini']}
     expected_ini = b'[SoraMod]\nApi=1\nDLL=CameraNearClarity.dll\nInitialize=SoraCameraInitialize\n'
     if install['mods/CameraNearClarity/sora_mod.ini'] != expected_ini:
         raise ValueError('Camera declaration differs from the ABI contract')
     OUTPUT.mkdir(parents=True,exist_ok=True)
     (OUTPUT/'native-build-report.json').write_bytes(raw)
     version = plan['version']
-    assets = [archive(f'CameraNearClarity-v{version}.zip','installation',install),
-              archive(f'CameraNearClarity-v{version}-source.zip','source',sources)]
+    suffix = '-local-candidate' if plan.get('channel') == 'local-candidate' else ''
+    assets = [archive(f'CameraNearClarity-v{version}{suffix}.zip','installation',install),
+              archive(f'CameraNearClarity-v{version}{suffix}-source.zip','source',sources)]
     result = dict(name=plan['name'],version=version,source_commit=commit,artifacts=assets,
                   dll_sha256=digest(dll),compile_inputs=inputs,
                   binary_reused=report_path.name=='accepted-report.json',

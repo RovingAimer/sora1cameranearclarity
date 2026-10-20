@@ -11,7 +11,8 @@ import shutil
 import subprocess
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / 'build/native'
-COMPILE_INPUTS = ('src/core.cpp', 'src/CameraNearClarity.h', 'src/LicenseNotice.h', 'src/PatchContext.h')
+COMPILE_INPUTS = ('src/core.cpp', 'src/CameraNearClarity.h', 'src/LicenseNotice.h', 'src/PatchContext.h',
+                  'src/runtime_control.cpp', 'src/runtime_control.h')
 
 def compiler_environment(sdk_root=None):
     finder = Path(os.environ.get('ProgramFiles(x86)', r'C:\Program Files (x86)')) / 'Microsoft Visual Studio/Installer/vswhere.exe'
@@ -68,11 +69,13 @@ def main():
     if not all((compiler, linker, dumper)):
         raise RuntimeError('Incomplete MSVC toolchain')
     obj=OUTPUT/'core.obj'; artifact=OUTPUT/'CameraNearClarity.dll'
-    flags=['/std:c++17', '/O2', '/MT', '/W4', '/WX', '/EHsc']
+    flags=['/std:c++17', '/O2', '/MT', '/W4', '/WX', '/EHsc', '/utf-8']
     compile_command = [compiler, '/nologo', '/Bv', '/c', *flags, '/Fo'+str(obj), str(ROOT/'src/core.cpp')]
     link_command = [linker, '/NOLOGO', '/DLL', '/MACHINE:X64', '/INCREMENTAL:NO', '/DYNAMICBASE', '/NXCOMPAT', '/Brepro',
-        '/OPT:REF', '/OUT:'+str(artifact), str(obj), 'kernel32.lib', 'bcrypt.lib']
+        '/OPT:REF', '/OUT:'+str(artifact), str(obj), str(OUTPUT/'runtime_control.obj'), 'kernel32.lib', 'bcrypt.lib', 'user32.lib']
     run(compile_command, env, 'compile.log')
+    run([compiler, '/nologo', '/c', *flags, '/Fo'+str(OUTPUT/'runtime_control.obj'),
+         str(ROOT/'src/runtime_control.cpp')], env, 'control_compile.log')
     run(link_command, env, 'link.log')
     run([dumper, '/NOLOGO', '/HEADERS', '/EXPORTS', '/DEPENDENTS', artifact], env, 'pe_inspection.txt')
     inspection=(OUTPUT/'pe_inspection.txt').read_text(encoding='utf-8')
@@ -80,7 +83,7 @@ def main():
     if exports != ['SoraCameraGetStatus', 'SoraCameraInitialize']:
         raise ValueError('Unexpected exports: '+repr(exports))
     dependencies=re.findall(r'^\s+([A-Za-z0-9_.-]+\.dll)\s*$', inspection, re.MULTILINE | re.IGNORECASE)
-    if {d.lower() for d in dependencies} != {'kernel32.dll','bcrypt.dll'}:
+    if {d.lower() for d in dependencies} != {'kernel32.dll','bcrypt.dll','user32.dll'}:
         raise ValueError('Unexpected dependencies: '+repr(dependencies))
     license_bytes=(ROOT/'LICENSE').read_text(encoding='utf-8').encode('utf-8')
     if license_bytes not in artifact.read_bytes():
@@ -94,7 +97,8 @@ def main():
         'msvc_version':env.get('VCToolsVersion'), 'windows_sdk_version':env.get('WindowsSDKVersion'),
         'exports':exports, 'dependencies':dependencies, 'license_embedded':True,
         'patch':json.loads((ROOT/'src/patch_context.json').read_text(encoding='utf-8')),
-        'atomic_write':'aligned InterlockedCompareExchange16 at RVA 0x1C9616, 72 37 -> EB 37; one changed byte',
+        'atomic_write':'aligned InterlockedCompareExchange16 at RVA 0x1C9616, 72 37 <-> EB 37; one changed byte',
+        'runtime_control':'Foreground-only edge-triggered key; 25 ms timer; INI content checked every 500 ms; no config writes',
         'game_executed':False, 'game_directory_written':False, 'dll_executed':False,
         'runtime_visual_verified':False,
         'adapted_host_guard_source':'DialogueOutline/source/src/core.cpp (MIT, copyright preserved)',
