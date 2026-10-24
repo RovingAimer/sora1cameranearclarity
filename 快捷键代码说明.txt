@@ -1,4 +1,4 @@
-相机反虚化：开关与快捷键
+相机反虚化 v0.2.0：开关与快捷键
 
 配置文件：游戏目录/mods/CameraNearClarity/CameraNearClarity.ini
 修改 CameraNearClarity.ini，不是加载器声明 sora_mod.ini。
@@ -53,6 +53,6 @@ ToggleKey=0x78
 Windows 官方完整代码表：
 https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 
-安装：此版是本地测试候选，不是正式发布。退出游戏，备份原 CameraNearClarity.dll，将安装 ZIP 合并到 sora_1st.exe 所在目录。新包新增 CameraNearClarity.ini；若已有个人配置，先保留并对照补齐两个键。通用加载器继续使用 v0.2.0，不需要替换它。
+安装：退出游戏，将整个原 mods/CameraNearClarity 文件夹备份到游戏目录之外，再将安装 ZIP 合并到 sora_1st.exe 所在目录。v0.1.0 升级会新增 CameraNearClarity.ini；已有个人配置时保留自己的 INI，只替换 DLL 和声明，并对照补齐两个键。通用加载器继续使用 v0.2.0，不需要替换它。
 测试：同一近距离人物场景按 F8，确认开启/关闭分别为人物保持显示/恢复原生淡出；长按、切出切回、修改快捷键及 Enabled 保存均应正确。实际透明度变化跟随游戏人物更新，不保证无过渡动画。远距离淡出、剧情透明度、其他 Mod 应保持正常。
-回退：退出游戏后恢复原 DLL，移除本次新增的 CameraNearClarity.ini；保留 sora_mod.ini 和其他 Mod。
+回退：退出游戏后恢复整个相机模块备份；首次安装则移除 mods/CameraNearClarity 文件夹。保留加载器和其他 Mod。

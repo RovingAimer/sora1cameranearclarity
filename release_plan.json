@@ -3,10 +3,12 @@
   "name": "相机反虚化",
   "version": "0.2.0",
   "runtime_name": "CameraNearClarity",
-  "body": "本地测试候选：新增默认F8切换、前台按键限制和CameraNearClarity.ini内容热更新。尚未正式发布。",
+  "body": "新增默认 F8 快速开关、可配置快捷键及配置热更新；快捷键切换和配置热更新已实机确认正常。",
   "runtime_acceptance": {
-    "game_runtime_verified": false,
-    "scope": "New runtime toggle/INI controls await user acceptance; v0.1.0 accepted behavior is the baseline."
+    "game_runtime_verified": true,
+    "accepted_date": "2026-10-24",
+    "scope": "User confirmed hotkey toggling and config hot reload work normally; exact supported EXE remains unchanged.",
+    "accepted_dll_sha256": "7e69ec382de80abb5b4c45dc7d06e26f387eee5b171d03593493dcdcb217fa24"
   },
-  "channel": "local-candidate"
+  "channel": "stable"
 }

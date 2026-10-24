@@ -1,6 +1,6 @@
 # 相机反虚化：构建与运行时开关
 
-当前源码为本地 v0.2.0 候选，尚未实机验收或公开发布。已验收的 v0.1.0 是原始近淡调整基线。
+当前源码为正式 v0.2.0。用户已于 2026-10-24 确认快捷键切换和配置热更新正常，授权正式发布。发布保留已验收的 DLL，不因文档整理重新编译。
 
 ## 构建和打包
 
@@ -16,7 +16,7 @@ SDK 需包含 Include/10.x、Lib/10.x，或工作区的 um/x64 与 ucrt/x64 库�
 
 输出 build/native/CameraNearClarity.dll 及 report.json，包含实际编译输入、编译器/SDK、导出与直接依赖。两个导出保持 SoraCameraInitialize、SoraCameraGetStatus，DllMain 不做初始化。构建不执行 DLL，不运行或安装游戏。
 
-源码提交干净后运行 `python tools/package_native.py`。release_plan.json 的 local-candidate 渠道生成安装和完整源码两个候选 ZIP，以及包外 manifest.json、native-build-report.json。安装 ZIP 仅含 mods/CameraNearClarity 下的 DLL、sora_mod.ini 和 CameraNearClarity.ini。完整源码包含构建工具、补丁上下文、键码说明及 MIT 许可。
+源码提交干净后运行 `python tools/package_native.py`。release_plan.json 的 stable 渠道生成 CameraNearClarity-v0.2.0.zip 和 CameraNearClarity-v0.2.0-source.zip，以及包外 manifest.json、native-build-report.json。local-candidate 渠道仅供后续本地候选使用。安装 ZIP 仅含 mods/CameraNearClarity 下的 DLL、sora_mod.ini 和 CameraNearClarity.ini。完整源码包含构建工具、补丁上下文、键码说明及 MIT 许可。
 
 ## 补丁所有权与开关
 
@@ -36,4 +36,4 @@ SDK 需包含 Include/10.x、Lib/10.x，或工作区的 um/x64 与 ucrt/x64 库�
 
 默认开启且成功时0x1F；正常关闭时0x17。PatchActive(0x8)为当前确认启用位，初始化/错误位累计；0x4000表示控制初始化失败，0x8000表示固定模块失败，其他错误位定义见src/CameraNearClarity.h。与其他补丁发生冲突后不再保证当前功能状态。
 
-候选只做工作区构建、静态/组件和包核验；游戏内按键、前台限制、近淡恢复、配置热更新及原有Mod兼容由用户手动验收。当前正式公开版仍为v0.1.0，不把原版本的验收记录当作本候选验收。
+构建、私有组件验证和源码包独立重编译一致性已在候选阶段完成；用户已确认 v0.2.0 快捷键切换与配置热更新正常。该验收不扩大目标 EXE 或其他补丁兼容范围。原生代码与已验收候选一致，正式整理只更新文档和发布元数据。
