@@ -5,6 +5,7 @@ extern "C" {
 extern const char SoraCameraLicenseNotice[] = R"MITNOTICE(
 MIT License
 
+Copyright (c) 2025 Hinkiii
 Copyright (c) 2026 DialogueOutline contributors
 Copyright (c) 2026 CameraNearClarity contributors
 

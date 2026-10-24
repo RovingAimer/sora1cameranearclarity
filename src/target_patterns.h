@@ -1,0 +1,10 @@
+// Copyright (c) 2026 Mod contributors
+// SPDX-License-Identifier: MIT
+// Native function signatures; no whole-file identity requirement.
+#pragma once
+#include "pattern_scan.h"
+namespace targets {
+inline constexpr unsigned char kNearFade[] = {0x0F,0x2F,0xFE,0x72,0x37,0x41,0xF6,0x85,0x02,0x01,0x00,0x00,0x10,0x75,0x25,0xF3,0x0F,0x10,0x83,0x3C,0x24,0x00,0x00,0xF3,0x0F,0x10,0x4C,0x24,0x30};
+inline constexpr char kNearFadeMask[] = "xxxx?xxxxxxxxx?xxxxxxxxxxxxx?";
+inline unsigned char* NearFade() noexcept { return native::FindPattern(kNearFade, kNearFadeMask); }
+}

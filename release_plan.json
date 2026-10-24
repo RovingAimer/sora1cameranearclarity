@@ -1,14 +1,13 @@
 {
   "repository": "RovingAimer/sora1cameranearclarity",
   "name": "相机反虚化",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "runtime_name": "CameraNearClarity",
-  "body": "新增默认 F8 快速开关、可配置快捷键及配置热更新；快捷键切换和配置热更新已实机确认正常。",
+  "body": "移除EXE文件名、大小与整文件hash白名单，改为特征码定位；保留快捷键与配置热更新。",
   "runtime_acceptance": {
-    "game_runtime_verified": true,
-    "accepted_date": "2026-10-24",
-    "scope": "User confirmed hotkey toggling and config hot reload work normally; exact supported EXE remains unchanged.",
-    "accepted_dll_sha256": "7e69ec382de80abb5b4c45dc7d06e26f387eee5b171d03593493dcdcb217fa24"
+    "game_runtime_verified": false,
+    "static_release_authorized": true,
+    "scope": "User authorized static verification then release; prior v0.2.0 controls accepted, new signature targeting not game-tested."
   },
   "channel": "stable"
 }

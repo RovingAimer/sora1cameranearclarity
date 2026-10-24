@@ -8,5 +8,7 @@
   "before": "72 37",
   "after": "eb 37",
   "target_rva": "0x1c964f",
-  "context_end_exclusive": "0x1c96ab"
+  "context_end_exclusive": "0x1c96ab",
+  "usage": "Historical reference bytes/addresses only; not a runtime host whitelist or fixed patch address",
+  "runtime_lookup": "target_patterns.h NearFade"
 }

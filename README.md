@@ -1,15 +1,15 @@
-# 相机反虚化 v0.2.0
+# 相机反虚化 v0.2.1
 
 《空之轨迹 the 1st》人物近距离淡出调整 Mod。相机靠近人物时让人物保持显示，保留远距离淡出和剧情整体透明度；景深和裁切面沿用游戏原逻辑。
 
-v0.2.0 新增默认 **F8** 开关、可配置快捷键和配置热更新。快捷键切换与配置热更新已由用户实机确认正常。
+v0.2.1 移除额外 EXE 白名单，并改用特征定位。v0.2.0 新增默认 **F8** 开关、可配置快捷键和配置热更新。快捷键切换与配置热更新已由用户实机确认正常。
 
 ## 下载与安装
 
 | 下载 | 用途 |
 | --- | --- |
-| [CameraNearClarity-v0.2.0.zip](https://github.com/RovingAimer/sora1cameranearclarity/releases/download/v0.2.0/CameraNearClarity-v0.2.0.zip) | 安装包：相机模块 DLL、加载声明和默认配置，共三个文件。 |
-| [CameraNearClarity-v0.2.0-source.zip](https://github.com/RovingAimer/sora1cameranearclarity/releases/download/v0.2.0/CameraNearClarity-v0.2.0-source.zip) | 完整源码、构建工具、安装说明、键码说明、来源记录与 MIT 许可。无需放进游戏。 |
+| [CameraNearClarity-v0.2.1.zip](https://github.com/RovingAimer/sora1cameranearclarity/releases/download/v0.2.1/CameraNearClarity-v0.2.1.zip) | 安装包：相机模块 DLL、加载声明和默认配置，共三个文件。 |
+| [CameraNearClarity-v0.2.1-source.zip](https://github.com/RovingAimer/sora1cameranearclarity/releases/download/v0.2.1/CameraNearClarity-v0.2.1-source.zip) | 完整源码、构建工具、安装说明、键码说明、来源记录与 MIT 许可。无需放进游戏。 |
 | [快捷键代码说明.txt](快捷键代码说明.txt) | 开关、改键、配置生效规则及常用虚拟键码。发布附件也提供独立文本。 |
 | [通用加载器 v0.2.0](https://github.com/RovingAimer/sora1looseload/releases/tag/v0.2.0) | 必装依赖。已有该版本时无需替换加载器。 |
 
@@ -42,7 +42,9 @@ ToggleKey=0x77
 
 ## 支持范围
 
-只支持 `sora_1st.exe`，大小 `11862528`，SHA256 `9585d3d993874d65156aba633c00b8a25faab3afde8953a8a183c80fb8f657ac`；模块会校验 EXE 和原指令。不宣称 2nd 兼容。
+不再按 EXE 文件名、文件大小或整文件 SHA256 设置白名单。采用与 Hinkiii 原版加载器相同的掩码特征扫描方式定位实际代码；找不到对应特征时跳过相应接入。其他版本是否可用取决于目标代码及对象布局，不要求整份 EXE 与某一版本完全相同。
+
+v0.2.1 的兼容性调整仅做静态验证；原有 F8 和配置热更新功能已在 v0.2.0 实机验收。
 
 影响范围覆盖共享人物路径及其子对象。特殊场景 bit `0x10` 原本将近距离淡出归零，该路径会被绕过。遇到改写同一指令或周围校验区的其他补丁时拒绝继续修改；热键冲突可换键。实现、状态与构建见 [BUILDING.md](BUILDING.md)。
 

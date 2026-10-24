@@ -1,4 +1,4 @@
-相机反虚化 v0.2.0：开关与快捷键
+相机反虚化 v0.2.1：开关与快捷键
 
 配置文件：游戏目录/mods/CameraNearClarity/CameraNearClarity.ini
 修改 CameraNearClarity.ini，不是加载器声明 sora_mod.ini。
